@@ -46,7 +46,6 @@ const Total = (props) =>{ /*Kurssien tehtävä määrien renderöijä*/
 }
 
 
-
 const App = () => {
 
   const course = {
