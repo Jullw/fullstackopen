@@ -40,7 +40,6 @@ const StatisticLine = ({text, value}) =>{
 const Button = ({handleClick, text}) => <button onClick={handleClick}> {text} </button>
 
 
-
 const App = () => {
   // tallenna napit omaan tilaansa
   const [good, setGood] = useState(0)
