@@ -1,4 +1,5 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
+import axios from 'axios'
 
 
 const Filter = ({searchName, handleSearch}) =>{
@@ -8,6 +9,7 @@ const Filter = ({searchName, handleSearch}) =>{
     </div>
   )
 }
+
 
 const Add =({addPerson,newNumber,newName,handleNameChange,handleNumberChange})=>{
 
@@ -35,17 +37,24 @@ const Persons =({personsToShow}) =>{
   </div>
   )
 }
-
+/* const [ persons, setPersons] = useState([
+  {name: 'Matti Leppälä', number: '+3584456739'}
+]) */
 const App = () => {
-  const [ persons, setPersons] = useState([
-    {name: 'Matti Leppälä', number: '+3584456739'}
-  ])
-  
+  const [ persons, setPersons] = useState([]) 
   const [ newName, setNewName] = useState('')
   const [ newNumber, setNewNumber] = useState('')
   const [ searchName, setSearchName] = useState('')
 
 
+  useEffect(() => {
+    console.log('Efectin sisalla')
+    axios
+    .get('http://localhost:3001/persons')
+    .then(response => {
+      setPersons(response.data)
+    })
+  },[])
 
   const addPerson = (event) =>{
     event.preventDefault()
@@ -53,10 +62,11 @@ const App = () => {
 
     const newPerson = {
       name: newName,
-      number: newNumber
+      number: newNumber,
+      id: persons.length + 1 
     }
     
-    persons.some(person => person.name === newName) ?
+    persons.some(person => person.name.toLowerCase() === newName.toLowerCase()) ?
     window.alert(`${newName} is already added to phonebook`): 
     setPersons(persons.concat(newPerson))
 
