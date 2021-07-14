@@ -1,14 +1,19 @@
 {
   "persons": [
     {
-      "name": "dd",
-      "number": "dd",
+      "name": "Matti Metsalainen",
+      "number": "043-2104923",
       "id": 1
     },
     {
-      "name": "sadsad",
-      "number": "sdaasd",
+      "name": "Maija Maalainen",
+      "number": "045-90432904",
       "id": 2
+    },
+    {
+      "name": "Lumi Talvi",
+      "number": "09024909420",
+      "id": 3
     }
   ]
 }
