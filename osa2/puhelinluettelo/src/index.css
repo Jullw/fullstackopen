@@ -1,0 +1,21 @@
+p{
+    color: aquamarine;
+}
+
+.success{
+    color: green;
+    border: solid green;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 5px;
+    background-color: lightgrey;
+}
+
+.error{
+    color: red;
+    border: solid red;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 5px;
+    background-color: lightgrey;
+}

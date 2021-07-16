@@ -13,8 +13,8 @@ const create = newPerson => {
     return request.then(response => response.data)
 }
 
-const deletePerson = (personID ,deletePerson) => {
-    const request = axios.delete(`${baseUrl}/${personID}`, deletePerson)
+const deletePerson = (personID) => {
+    const request = axios.delete(`${baseUrl}/${personID}`)
     return request.then(response => response.data)
 }
 
