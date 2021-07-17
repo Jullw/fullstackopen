@@ -85,6 +85,8 @@ const NotificationHandler = ({ type, text }) => {
     )
   } else {
     return null
+    
+    
   }
 }
 
@@ -98,7 +100,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [searchName, setSearchName] = useState('')
 
-  // Text määrittelee tekstin ilmoitukselle.
+  // Text määrittelee tekstin ilmoitukselle. (Added {nimi}, Deleted {nimi}, Replaced {Nimi}")
   // Type määrittelee minkä tyyppinen ilmoitus on eli add,replace,delete
   const [text, setText] = useState('')
   const [type, setType] = useState('')
