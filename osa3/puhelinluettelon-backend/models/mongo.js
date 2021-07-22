@@ -2,8 +2,6 @@ const mongoose = require('mongoose')
 
 const url = process.env.MONGODB_URI
 
-//mongodb+srv://JaaJuu:penetele@clusterduck.mij1o.mongodb.net/phonebookDB?retryWrites=true&w=majority 
-
 console.log('Connecting to ', url)
 
 
