@@ -93,10 +93,11 @@ const generateID = () => {
     return randomID;
 }
 */
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
 
     const body = request.body
-
+    
+    /*
     if (!body.name) {
         return response.status(400).json({
             error: "Name missing"
@@ -107,21 +108,26 @@ app.post('/api/persons', (request, response) => {
             error: "Number missing"
         })
     }
-    /*
+
     if(persons.some(p => p.name === body.name)){
         return response.status(400).json({
             error: "name must be unique" 
         }) 
     } */
+
     const person = new Person({
         name: body.name,
         number: body.number,
     })
 
     //persons = persons.concat(person)
-    person.save().then(savedPerson => {
-        response.json(savedPerson)
+    person
+    .save()
+    .then(savedPerson => savedPerson.toJSON())
+    .then(savedAndFormattedPerson => {
+        response.json(savedAndFormattedPerson)
     })
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
@@ -147,11 +153,13 @@ app.use(unknownEndpoint)
 
 const errorHandler = (error, request, response, next) => {
     console.error(error.message)
+    console.error(error.name)
 
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id!!' })
+    }else if(error.name === 'ValidationError'){ // Jos POST vaiheessa ei ole uniikki nimi niin tämä lauseke käynnistyy.
+        return response.status(400).json({ error : error.message})
     }
-
     next(error)
 }
 
