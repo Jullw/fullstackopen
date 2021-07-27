@@ -5,7 +5,6 @@ const url = process.env.MONGODB_URI
 
 console.log('Connecting to ', url)
 
-
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
   .then(result => {
     console.log('Connected to MongoDB, yaas')
@@ -21,7 +20,7 @@ const personSchema = new mongoose.Schema({
     minlength: 3,
     required: true,
     unique : true,
-    uniqueCaseInsensitive : true 
+    uniqueCaseInsensitive : true
   },
 
   number: {
