@@ -1,6 +1,7 @@
+const Note = require("./models/note");
+
 const express = require("express");
 const morgan = require("morgan");
-
 const app = express();
 
 morgan.token("body", (req) => {
@@ -18,94 +19,69 @@ app.use(express.static("dist"));
 
 const { randomUUID } = require("node:crypto");
 
-let notes = [
-  {
-    id: "aa1f8e10-4c17-49d8-9e6d-39f96fb4ee63",
-    content: "Node is running smoothly",
-    important: true,
-  },
-  {
-    id: "f871bde5-b4df-4049-8ff7-1d2c5b5a7803",
-    content: "Javascript is a great language",
-    important: true,
-  },
-  {
-    id: "f871bde5-b4df-4049-8ff7-1d2c5b5a7809",
-    content: "Javascript is multithreaded ",
-    important: false,
-  },
-];
-
 app.get("/api", (request, response) => {
   response.send("<h1>Connected to API</h1>");
 });
 
-app.get("/api/notes/info", (req, res) => {
-  const returnContent = `<p> Notes has ${notes.length} items </p> <p> ${new Date().toString()}</p>`;
-  res.send(returnContent);
+app.get("/api/notes/info", async (req, res) => {
+  const count = (await Note.countDocuments({})) || 0;
+
+  res.send(
+    `<p> Notes has ${count} items </p> <p> ${new Date().toString()}</p>`,
+  );
 });
 
-app.get("/api/notes/:id", (req, res) => {
-  const item = notes.find((item) => item.id === Number(req.params.id));
-  if (item) {
-    res.json(item);
-  }
-  res.status(404).end();
+app.get("/api/notes/:id", async (req, res) => {
+  const note = await Note.findById(req.params.id);
+  res.json(note);
 });
 
-app.delete("/api/notes/:id", (req, res) => {
-  const id = req.params.id;
-  notes = notes.filter((note) => note.id !== id);
+app.delete("/api/notes/:id", async (req, res) => {
+  const note = await Note.findByIdAndDelete(req.params.id);
   res.status(204).end();
 });
 
-app.post("/api/notes", (req, res) => {
+app.post("/api/notes", async (req, res) => {
   const body = req.body;
 
   if (!body.content) {
     badRequestField("Content field is missing from request body", res);
     return;
   }
+  const exists = await Note.exists({ content: body.content });
 
-  if (notes.some((item) => item.content === body.content)) {
+  if (exists) {
     badRequestField("Content field is already in use", res);
     return;
   }
-
-  const note = {
+  const note = new Note({
     id: generateId(),
     content: body.content,
     important: body.important || false,
-  };
+  });
 
-  notes = notes.concat(note);
+  note.save();
+
   res.status(201).json({ message: "Note added successfully", data: note });
 });
 
-app.put("/api/notes/:id", (req, res) => {
-  const index = notes.findIndex((item) => item.id === req.params.id);
-  notes[index] = { ...notes[index], ...req.body };
+app.put("/api/notes/:id", async (req, res) => {
+  const note = await Note.findByIdAndUpdate(
+    req.params.id,
+    {
+      content: req.body.content,
+      important: req.body.important,
+    },
+    {
+      returnDocument: "after",
+    },
+  );
 
-  res.json({ message: "Note updated successfully", data: notes[index] });
+  res.json({ message: "Note updated successfully", data: note });
 });
 
-app.put("/api/notes/toggle/:id", (req, res) => {
-  const item = notes.find((item) => item.id === req.params.id);
-
-  const updatedNote = {
-    ...item,
-    important: !item.important,
-  };
-
-  notes = notes.map((note) => (note.id === item.id ? updatedNote : note));
-
-  res.json({
-    message: "Note importance toggled successfully",
-    data: updatedNote,
-  });
-});
-
-app.get("/api/notes", (request, response) => {
+app.get("/api/notes", async (request, response) => {
+  const notes = await Note.find({});
   response.json(notes);
 });
 
@@ -124,6 +100,14 @@ const unknownEndpoint = (request, response) => {
 };
 
 app.use(unknownEndpoint);
+
+const errorHandler = (error, req, res, next) => {
+  res.status(error.status || 500).json({
+    error: error.message || "Internal server error",
+  });
+};
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
