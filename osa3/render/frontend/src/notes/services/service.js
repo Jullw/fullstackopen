@@ -19,7 +19,13 @@ const update = async (url, object) => {
       },
       body: JSON.stringify(object),
     });
+
     const data = await response.json();
+
+    if (!response.ok) {
+      return [null, data];
+    }
+
     return [data, null];
   } catch (error) {
     return [null, error];

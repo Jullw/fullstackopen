@@ -7,7 +7,7 @@ const url = process.env.MONGO_URL;
 mongoose
   .connect(url, { family: 4 })
 
-  .then((result) => {
+  .then(() => {
     console.log("connected to MongoDB");
   })
   .catch((error) => {
@@ -15,7 +15,24 @@ mongoose
   });
 
 const noteSchema = new mongoose.Schema({
-  content: String,
+  content: {
+    type: String,
+    minlength: 5,
+    required: true,
+    validate: {
+      validator: async function (content) {
+        const existingNote = await mongoose.model("Note").exists({
+          content,
+          // Ei lasketa nykyistä dokumenttia duplikaatiksi päivitettäessä
+          _id: { $ne: this._id },
+        });
+
+        return !existingNote;
+      },
+
+      message: (props) => `Note with content "${props.value}" already exists`,
+    },
+  },
   important: Boolean,
 });
 
