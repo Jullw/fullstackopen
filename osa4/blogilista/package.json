@@ -9,10 +9,16 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node --env-file=.env --watch index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ."
   },
   "dependencies": {
     "express": "^5.2.1",
     "mongoose": "^9.7.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.7.0",
+    "globals": "^17.7.0"
   }
 }
