@@ -10,7 +10,7 @@ const totalLikes = (blogs) => {
   return total;
 };
 
-const mostLikes = (blogs) => {
+const favoriteBlog = (blogs) => {
   if (blogs.length === 0) return {};
 
   let mostLiked = blogs[0];
@@ -50,4 +50,31 @@ const authorWithMostBlogs = (blogs) => {
   return author;
 };
 
-module.exports = { dummy, totalLikes, mostLikes, authorWithMostBlogs };
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) return {};
+
+  let tempBlog = [];
+  const author = {
+    author: "",
+    likes: 0,
+  };
+
+  blogs.forEach((blog) => {
+    tempBlog[blog.author] = blog.likes + (tempBlog[blog.author] ?? 0);
+
+    if (tempBlog[blog.author] > author.likes) {
+      author.likes = tempBlog[blog.author];
+      author.author = blog.author;
+    }
+  });
+
+  return author;
+};
+
+module.exports = {
+  dummy,
+  totalLikes,
+  favoriteBlog,
+  authorWithMostBlogs,
+  mostLikes,
+};

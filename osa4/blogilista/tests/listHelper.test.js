@@ -73,18 +73,18 @@ describe("total likes ", () => {
   });
 });
 
-describe("most likes ", () => {
-  test("when list is empty there is no blog with most likes", () => {
-    assert.deepStrictEqual(listHelper.mostLikes([]), {});
+describe("favorite Blog ", () => {
+  test("when list is empty there is no favorite", () => {
+    assert.deepStrictEqual(listHelper.favoriteBlog([]), {});
   });
 
-  test("when blog list has only one blog that has most likes ", () => {
+  test("when blog list has only one blog that is favorite", () => {
     const listOfone = [blogs[1]];
-    assert.deepStrictEqual(listHelper.mostLikes(listOfone), blogs[1]);
+    assert.deepStrictEqual(listHelper.favoriteBlog(listOfone), blogs[1]);
   });
 
-  test("when whole blog list get most liked blog", () => {
-    assert.deepStrictEqual(listHelper.mostLikes(blogs), blogs[2]);
+  test("when whole blog list get favorite", () => {
+    assert.deepStrictEqual(listHelper.favoriteBlog(blogs), blogs[2]);
   });
 });
 
@@ -93,7 +93,7 @@ describe("most blogs ", () => {
     assert.deepStrictEqual(listHelper.authorWithMostBlogs([]), {});
   });
 
-  test("when list has one return that as most blogs  ", () => {
+  test("when list has one return that as most blogs", () => {
     const listOfone = [blogs[1]];
     assert.deepStrictEqual(listHelper.authorWithMostBlogs(listOfone), {
       author: "Edsger W. Dijkstra",
@@ -105,6 +105,27 @@ describe("most blogs ", () => {
     assert.deepStrictEqual(listHelper.authorWithMostBlogs(blogs), {
       author: "Robert C. Martin",
       blogs: 3,
+    });
+  });
+
+  describe("most likes ", () => {
+    test("when list is empty there is no author with most likes", () => {
+      assert.deepStrictEqual(listHelper.mostLikes([]), {});
+    });
+
+    test("when blog list has only one blog that author has most likes ", () => {
+      const listOfone = [blogs[1]];
+      assert.deepStrictEqual(listHelper.mostLikes(listOfone), {
+        author: "Edsger W. Dijkstra",
+        likes: 5,
+      });
+    });
+
+    test("when whole blog list get most liked author", () => {
+      assert.deepStrictEqual(listHelper.mostLikes(blogs), {
+        author: "Edsger W. Dijkstra",
+        likes: 17,
+      });
     });
   });
 });
