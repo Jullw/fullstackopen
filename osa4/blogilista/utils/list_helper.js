@@ -60,10 +60,11 @@ const mostLikes = (blogs) => {
   };
 
   blogs.forEach((blog) => {
-    tempBlog[blog.author] = blog.likes + (tempBlog[blog.author] ?? 0);
+    const likes = (tempBlog[blog.author] =
+      blog.likes + (tempBlog[blog.author] ?? 0));
 
-    if (tempBlog[blog.author] > author.likes) {
-      author.likes = tempBlog[blog.author];
+    if (likes > author.likes) {
+      author.likes = likes;
       author.author = blog.author;
     }
   });
