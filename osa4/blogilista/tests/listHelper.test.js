@@ -74,7 +74,7 @@ describe("total likes ", () => {
 });
 
 describe("most likes ", () => {
-  test("when list is there is no blog with most likes", () => {
+  test("when list is empty there is no blog with most likes", () => {
     assert.deepStrictEqual(listHelper.mostLikes([]), {});
   });
 
@@ -85,5 +85,26 @@ describe("most likes ", () => {
 
   test("when whole blog list get most liked blog", () => {
     assert.deepStrictEqual(listHelper.mostLikes(blogs), blogs[2]);
+  });
+});
+
+describe("most blogs ", () => {
+  test("when empty list return empty object", () => {
+    assert.deepStrictEqual(listHelper.authorWithMostBlogs([]), {});
+  });
+
+  test("when list has one return that as most blogs  ", () => {
+    const listOfone = [blogs[1]];
+    assert.deepStrictEqual(listHelper.authorWithMostBlogs(listOfone), {
+      author: "Edsger W. Dijkstra",
+      blogs: 1,
+    });
+  });
+
+  test("when whole list return author with most blogs ", () => {
+    assert.deepStrictEqual(listHelper.authorWithMostBlogs(blogs), {
+      author: "Robert C. Martin",
+      blogs: 3,
+    });
   });
 });

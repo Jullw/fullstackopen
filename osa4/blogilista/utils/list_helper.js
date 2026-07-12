@@ -23,4 +23,31 @@ const mostLikes = (blogs) => {
   return mostLiked;
 };
 
-module.exports = { dummy, totalLikes, mostLikes };
+/*  Return object type
+ *   {
+ *       author: "Arthut..."
+ *       blogs: 3
+ *   }
+ */
+const authorWithMostBlogs = (blogs) => {
+  if (blogs.length === 0) return {};
+
+  let tempBlog = [];
+  const author = {
+    author: "",
+    blogs: 0,
+  };
+
+  blogs.forEach((blog) => {
+    const count = (tempBlog[blog.author] = (tempBlog[blog.author] ?? 0) + 1);
+
+    if (count > author.blogs) {
+      author.blogs = count;
+      author.author = blog.author;
+    }
+  });
+
+  return author;
+};
+
+module.exports = { dummy, totalLikes, mostLikes, authorWithMostBlogs };
