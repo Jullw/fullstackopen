@@ -10,4 +10,17 @@ const totalLikes = (blogs) => {
   return total;
 };
 
-module.exports = { dummy, totalLikes };
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) return {};
+
+  let mostLiked = blogs[0];
+
+  blogs.forEach((element) => {
+    if (element.likes > mostLiked.likes) {
+      mostLiked = element;
+    }
+  });
+  return mostLiked;
+};
+
+module.exports = { dummy, totalLikes, mostLikes };

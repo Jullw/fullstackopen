@@ -72,3 +72,18 @@ describe("total likes ", () => {
     assert.strictEqual(listHelper.totalLikes(blogs), 36);
   });
 });
+
+describe("most likes ", () => {
+  test("when list is there is no blog with most likes", () => {
+    assert.deepStrictEqual(listHelper.mostLikes([]), {});
+  });
+
+  test("when blog list has only one blog that has most likes ", () => {
+    const listOfone = [blogs[1]];
+    assert.deepStrictEqual(listHelper.mostLikes(listOfone), blogs[1]);
+  });
+
+  test("when whole blog list get most liked blog", () => {
+    assert.deepStrictEqual(listHelper.mostLikes(blogs), blogs[2]);
+  });
+});
