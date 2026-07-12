@@ -1,0 +1,18 @@
+{
+  "name": "blogilista",
+  "version": "1.0.0",
+  "description": "Blogeja sisältävä lista",
+  "license": "MIT",
+  "author": "Jullw",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --env-file=.env --watch index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "mongoose": "^9.7.4"
+  }
+}
