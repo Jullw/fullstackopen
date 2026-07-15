@@ -1,20 +1,10 @@
 const express = require("express");
-const mongoose = require("mongoose");
-const config = require("./utils/config");
-const logger = require("./utils/logger");
 const middleware = require("./utils/middleware");
 const blogsRouter = require("./controllers/blogs");
+const { connectToDb } = require("./utils/db_connect");
 
 const app = express();
-
-mongoose
-  .connect(config.MONGO_URL, { family: 4 })
-  .then(() => {
-    logger.info("connected to MongoDB");
-  })
-  .catch((error) => {
-    logger.error("error connection to MongoDB:", error.message);
-  });
+connectToDb();
 
 app.use(express.static("dist"));
 app.use(express.json());
