@@ -17,11 +17,17 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
-  } else if (error.name === "ValidationError") {
+  }
+
+  if (error.name === "ValidationError") {
     return response.status(400).json({ error: error.message });
   }
 
   next(error);
+  // HOX Aktivoi jossain vaiheessa, parempi näyttää mahd geneerinen virheilmoitus
+  // return response.status(500).json({
+  //   error: "internal server error",
+  // });
 };
 
 module.exports = {
