@@ -18,5 +18,7 @@ blogSchema.set("toJSON", {
     delete returnedObject.__v;
   },
 });
+/** @type {import("mongoose").Model<BlogType>} */
+const blog = mongoose.model("Blog", blogSchema);
 
-module.exports = mongoose.model("Blog", blogSchema);
+module.exports = blog;
