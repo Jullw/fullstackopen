@@ -4,16 +4,25 @@ const mongoose = require("mongoose");
 const supertest = require("supertest");
 const app = require("../app");
 const Blog = require("../models/blog");
+const User = require("../models/user");
 const helper = require("./test_helper");
 
 const api = supertest(app);
+let testUser;
 
 beforeEach(async () => {
   await Blog.deleteMany({});
+  await User.deleteMany({});
 
   const blogObjects = helper.predefinedBlogs.map((blog) => new Blog(blog));
   const promiseArray = blogObjects.map((blog) => blog.save());
   await Promise.all(promiseArray);
+
+  testUser = await new User({
+    name: "Matti Meikalainen",
+    username: "MatMei3",
+    passwordHash: "expltrL1ENWX4mWAWyAPOHhv0ti8XqqgHi",
+  }).save();
 
   // Toinen tapa ja jos järjestyksellä on väliä
   //   for (let blog of predefinedBlogs) {
@@ -85,6 +94,7 @@ describe("api tests", () => {
         title: "Testaajan Arki",
         author: "Tepi Testaaja",
         url: "wwww.testaajanarki.exp.fi",
+        userId: testUser.id,
       };
 
       await api
@@ -105,6 +115,7 @@ describe("api tests", () => {
         title: "Testaajan Arki",
         author: "Tepi Testaaja",
         url: "wwww.testaajanarki.exp.fi",
+        userId: testUser.id,
       };
 
       const result = await api
@@ -125,6 +136,7 @@ describe("api tests", () => {
       const newBlog = {
         title: "Testaajan Arki",
         author: "Tepi Testaaja",
+        userId: testUser.id,
       };
 
       await api.post("/api/blogs").send(newBlog).expect(400);
@@ -168,7 +180,7 @@ describe("api tests", () => {
   });
 
   after(async () => {
-    await Blog.deleteMany({});
+    await mongoose.connection.dropDatabase();
     await mongoose.connection.close();
   });
 });

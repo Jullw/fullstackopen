@@ -142,7 +142,7 @@ describe("user tests", () => {
   });
 
   after(async () => {
-    await User.deleteMany({});
+    await mongoose.connection.dropDatabase();
     await mongoose.connection.close();
   });
 });
