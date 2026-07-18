@@ -6,23 +6,34 @@ const app = require("../app");
 const Blog = require("../models/blog");
 const User = require("../models/user");
 const helper = require("./test_helper");
+const jwt = require("jsonwebtoken");
 
 const api = supertest(app);
 let testUser;
+let testToken;
 
 beforeEach(async () => {
   await Blog.deleteMany({});
   await User.deleteMany({});
-
-  const blogObjects = helper.predefinedBlogs.map((blog) => new Blog(blog));
-  const promiseArray = blogObjects.map((blog) => blog.save());
-  await Promise.all(promiseArray);
 
   testUser = await new User({
     name: "Matti Meikalainen",
     username: "MatMei3",
     passwordHash: "expltrL1ENWX4mWAWyAPOHhv0ti8XqqgHi",
   }).save();
+
+  const userForToken = {
+    username: testUser.username,
+    id: testUser._id,
+  };
+
+  testToken = jwt.sign(userForToken, process.env.SECRET);
+
+  const blogObjects = helper.predefinedBlogs.map(
+    (blog) => new Blog({ ...blog, user: testUser._id }),
+  );
+  const promiseArray = blogObjects.map((blog) => blog.save());
+  await Promise.all(promiseArray);
 
   // Toinen tapa ja jos järjestyksellä on väliä
   //   for (let blog of predefinedBlogs) {
@@ -94,11 +105,11 @@ describe("api tests", () => {
         title: "Testaajan Arki",
         author: "Tepi Testaaja",
         url: "wwww.testaajanarki.exp.fi",
-        userId: testUser.id,
       };
 
       await api
         .post("/api/blogs")
+        .set("Authorization", `Bearer ${testToken}`)
         .send(newBlog)
         .expect(201)
         .expect("Content-Type", /application\/json/);
@@ -115,11 +126,11 @@ describe("api tests", () => {
         title: "Testaajan Arki",
         author: "Tepi Testaaja",
         url: "wwww.testaajanarki.exp.fi",
-        userId: testUser.id,
       };
 
       const result = await api
         .post("/api/blogs")
+        .set("Authorization", `Bearer ${testToken}`)
         .send(newBlog)
         .expect(201)
         .expect("Content-Type", /application\/json/);
@@ -139,7 +150,11 @@ describe("api tests", () => {
         userId: testUser.id,
       };
 
-      await api.post("/api/blogs").send(newBlog).expect(400);
+      await api
+        .post("/api/blogs")
+        .set("Authorization", `Bearer ${testToken}`)
+        .send(newBlog)
+        .expect(400);
 
       const blogs = await helper.blogsInDb();
       assert.strictEqual(blogs.length, helper.predefinedBlogs.length);
@@ -151,7 +166,10 @@ describe("api tests", () => {
       const blogsInStart = await helper.blogsInDb();
       const blogToDelete = blogsInStart[0];
 
-      await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+      await api
+        .delete(`/api/blogs/${blogToDelete.id}`)
+        .set("Authorization", `Bearer ${testToken}`)
+        .expect(204);
 
       const blogsInEnd = await helper.blogsInDb();
       const ids = blogsInEnd.map((blog) => blog.id);
@@ -169,6 +187,7 @@ describe("api tests", () => {
 
       const result = await api
         .put(`/api/blogs/${blogToUpdate.id}`)
+        .set("Authorization", `Bearer ${testToken}`)
         .send(blogToUpdate)
         .expect(200);
 
