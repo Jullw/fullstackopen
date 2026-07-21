@@ -1,29 +1,53 @@
-import { useEffect, useState } from "react";
-import service from "./blogService";
+import { use, Suspense } from "react";
+import service from "../services/blogs";
+import { ErrorBoundary } from "react-error-boundary";
+
+const blogsPromise = service.index("/api/blogs");
 
 const Blogs = () => {
-  const [blogs, setBlogs] = useState([]);
+  return (
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <Suspense fallback={<Loading />}>
+        <ShowBlogs />
+      </Suspense>
+    </ErrorBoundary>
+  );
+};
 
-  useEffect(() => {
-    const fetchIndex = async () => {
-      const [data, error] = await service.index("/api/blogs");
-      data ? setBlogs(data) : alert(error.message || "something went wrong");
-    };
-    fetchIndex();
-  }, []);
-
+const ShowBlogs = () => {
+  const data = use(blogsPromise);
   return (
     <div>
-      {blogs.map((e) => {
-        return (
-          <div key={e.id}>
-            {" "}
-            {e.author} {e.title} {e.likes}{" "}
-          </div>
-        );
+      {data.map((b) => {
+        return <Blog key={b.id} blog={b} />;
       })}
     </div>
   );
+};
+
+const Blog = ({ blog }) => {
+  const { title, author, likes, user } = blog;
+
+  return (
+    <div
+      style={{
+        borderBottom: "1px dotted black",
+        padding: "0.2rem",
+        width: "fit-content",
+      }}
+    >
+      {user ? <div> Added by: {user.username} </div> : <></>}
+      Title: {title}, Author: {author}, Likes: {likes}{" "}
+    </div>
+  );
+};
+
+const Loading = () => {
+  return <div>loading...</div>;
+};
+
+const ErrorFallback = ({ error }) => {
+  return <div>Error: {error.message}</div>;
 };
 
 export default Blogs;
