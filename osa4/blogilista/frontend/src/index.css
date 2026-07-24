@@ -7,3 +7,26 @@ html {
   margin: 0 auto;
   min-height: 100svh;
 }
+
+.header {
+  display: flex;
+  align-items: center;
+  height: fit-content;
+  gap: 4px;
+}
+
+.create-blog-form {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.5rem;
+  width: fit-content;
+}
+
+.create-blog-form > div,
+.create-blog-form label {
+  display: contents;
+}
+
+.create-blog-form button {
+  grid-column: 2;
+}

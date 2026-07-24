@@ -1,7 +1,45 @@
-function Login({ username, setUsername, password, setPassword }) {
-  const handleLogin = (event) => {
+import { useEffect } from "react";
+import loginService from "../services/login";
+import { setToken } from "../services/blogs";
+
+const Login = ({
+  username,
+  setUsername,
+  password,
+  setPassword,
+  setUser,
+  setToast,
+}) => {
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem("user");
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      setUser(user);
+      setToken(user.token);
+    }
+  }, []);
+
+  const handleLogin = async (event) => {
     event.preventDefault();
-    console.log("logging in with", username, password);
+    const [user, error] = await loginService.login({ username, password });
+
+    if (user) {
+      setUser(user);
+      setUsername("");
+      setPassword("");
+      setToast({
+        id: crypto.randomUUID(),
+        message: `${user.username} logged in successfully`,
+        type: "success",
+      });
+      return;
+    }
+
+    setToast({
+      id: crypto.randomUUID(),
+      message: error,
+      type: "error",
+    });
   };
   return (
     <>
@@ -31,6 +69,6 @@ function Login({ username, setUsername, password, setPassword }) {
       </form>
     </>
   );
-}
+};
 
 export default Login;

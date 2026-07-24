@@ -1,20 +1,17 @@
 import { use, Suspense } from "react";
-import service from "../services/blogs";
 import { ErrorBoundary } from "react-error-boundary";
 
-const blogsPromise = service.index("/api/blogs");
-
-const Blogs = () => {
+const Blogs = ({ blogsPromise }) => {
   return (
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
+    <ErrorBoundary FallbackComponent={ErrorFallback} resetKeys={[blogsPromise]}>
       <Suspense fallback={<Loading />}>
-        <ShowBlogs />
+        <ShowBlogs blogsPromise={blogsPromise} />
       </Suspense>
     </ErrorBoundary>
   );
 };
 
-const ShowBlogs = () => {
+const ShowBlogs = ({ blogsPromise }) => {
   const data = use(blogsPromise);
   return (
     <div>
