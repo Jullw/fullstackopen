@@ -1,22 +1,29 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Blogs from "./blogs/Blogs";
 import Login from "./login/Login";
 import Toast from "./toast/Toast";
 import CreateBlog from "./blogs/CreateBlog";
 import blogService from "./services/blogs";
+import Togglable from "./toggable/Toggable";
 
 const initialBlogsPromise = blogService.index();
 
 function App() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [toast, setToast] = useState(null);
   const [blogsPromise, setBlogsPromise] = useState(initialBlogsPromise);
+
+  const blogCreateRef = useRef();
 
   const logOut = () => {
     window.localStorage.removeItem("user");
-    setUsername(null);
+    setUser(null);
+  };
+
+  const onBlogCreateOrCancel = (key) => {
+    if (key === "created") {
+      refreshBlogs();
+    }
+    blogCreateRef.current.toggleVisibility();
   };
 
   const refreshBlogs = () => {
@@ -25,16 +32,12 @@ function App() {
 
   return (
     <>
-      <Toast toast={toast} setToast={setToast} />
+      <Toast />
+
       {!user && (
-        <Login
-          username={username}
-          setUsername={setUsername}
-          password={password}
-          setPassword={setPassword}
-          setUser={setUser}
-          setToast={setToast}
-        />
+        <Togglable textShow="show login" textHide="hide login">
+          <Login setUser={setUser} />
+        </Togglable>
       )}
       {user && (
         <div className="header">
@@ -44,10 +47,19 @@ function App() {
           </button>
         </div>
       )}
+
       {user && (
-        <CreateBlog setToast={setToast} onBlogCreated={refreshBlogs} />
+        <Togglable
+          textShow="create blog"
+          textHide="hide blog create"
+          ref={blogCreateRef}
+        >
+          <CreateBlog onAction={onBlogCreateOrCancel} />
+        </Togglable>
       )}
-      {user && <Blogs blogsPromise={blogsPromise} />}
+      {user && (
+        <Blogs blogsPromise={blogsPromise} refreshBlogs={refreshBlogs} />
+      )}
     </>
   );
 }

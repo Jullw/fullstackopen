@@ -1,15 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import loginService from "../services/login";
 import { setToken } from "../services/blogs";
+import { useToast } from "../toast/ToastContext";
 
-const Login = ({
-  username,
-  setUsername,
-  password,
-  setPassword,
-  setUser,
-  setToast,
-}) => {
+const Login = ({ setUser }) => {
+  const { showToast } = useToast();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("user");
     if (loggedUserJSON) {
@@ -27,19 +25,10 @@ const Login = ({
       setUser(user);
       setUsername("");
       setPassword("");
-      setToast({
-        id: crypto.randomUUID(),
-        message: `${user.username} logged in successfully`,
-        type: "success",
-      });
+      showToast(`${user.username} logged in successfully`, "success");
       return;
     }
-
-    setToast({
-      id: crypto.randomUUID(),
-      message: error,
-      type: "error",
-    });
+    showToast(`${error}`, "error");
   };
   return (
     <>

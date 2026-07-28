@@ -1,5 +1,6 @@
 import { useState } from "react";
 import service from "../services/blogs";
+import { useToast } from "../toast/ToastContext";
 
 const blogTemplate = {
   title: "",
@@ -8,7 +9,8 @@ const blogTemplate = {
   likes: 0,
 };
 
-const CreateBlog = ({ setToast, onBlogCreated }) => {
+const CreateBlog = ({ onAction }) => {
+  const { showToast } = useToast();
   const [newBlog, setNewBlog] = useState(blogTemplate);
 
   const handleCreateBlog = async (event) => {
@@ -17,20 +19,12 @@ const CreateBlog = ({ setToast, onBlogCreated }) => {
     const [data, error] = await service.create(newBlog);
 
     if (data) {
-      onBlogCreated();
-      setToast({
-        id: crypto.randomUUID(),
-        message: "Blog created",
-        type: "success",
-      });
+      onAction("created");
+      showToast("Blog created", "success");
     }
 
     if (error) {
-      setToast({
-        id: crypto.randomUUID(),
-        message: error,
-        type: "error",
-      });
+      showToast(error, "error");
     }
 
     setNewBlog(blogTemplate);
@@ -87,6 +81,9 @@ const CreateBlog = ({ setToast, onBlogCreated }) => {
             />
           </label>
         </div>
+        <button type="button" onClick={() => onAction("cancel")}>
+          Cancel
+        </button>
         <button type="submit">Create Blog</button>
       </form>
     </div>

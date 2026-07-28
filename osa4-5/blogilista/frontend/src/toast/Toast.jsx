@@ -1,22 +1,8 @@
 import "./toast.css";
-import { useRef, useEffect } from "react";
+import { useToast } from "./ToastContext";
 
-function Toast({ toast, setToast }) {
-  const timeout = useRef(null);
-
-  useEffect(() => {
-    if (!toast) return;
-
-    clearTimeout(timeout.current);
-    timeout.current = setTimeout(() => {
-      setToast(null);
-    }, 3000);
-
-    return () => {
-      clearTimeout(timeout.current);
-    };
-  }, [toast, setToast]);
-
+function Toast() {
+  const { toast } = useToast();
   if (!toast) return null;
 
   return (

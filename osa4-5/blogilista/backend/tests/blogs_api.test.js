@@ -183,18 +183,27 @@ describe("api tests", () => {
     test("with valid id and body blog can be updated", async () => {
       const blogsInStart = await helper.blogsInDb();
       const blogToUpdate = blogsInStart[0];
-      blogToUpdate.likes = 100;
+      const changes = {
+        title: "Updated title",
+        author: "Updated author",
+        url: "https://example.com/updated-blog",
+        likes: 100,
+      };
 
       const result = await api
         .put(`/api/blogs/${blogToUpdate.id}`)
         .set("Authorization", `Bearer ${testToken}`)
-        .send(blogToUpdate)
+        .send(changes)
         .expect(200);
 
       const blogsInEnd = await helper.blogsInDb();
       const updatedBlog = blogsInEnd.find((e) => e.id === result.body.id);
 
-      assert.strictEqual(updatedBlog.likes, 100);
+      assert.strictEqual(updatedBlog.title, changes.title);
+      assert.strictEqual(updatedBlog.author, changes.author);
+      assert.strictEqual(updatedBlog.url, changes.url);
+      assert.strictEqual(updatedBlog.likes, changes.likes);
+      assert.strictEqual(updatedBlog.user.id, testUser.id);
     });
   });
 
