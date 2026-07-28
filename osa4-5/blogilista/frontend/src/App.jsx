@@ -1,16 +1,21 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Blogs from "./blogs/Blogs";
 import Login from "./login/Login";
 import Toast from "./toast/Toast";
 import CreateBlog from "./blogs/CreateBlog";
-import blogService from "./services/blogs";
+import blogService, { setToken } from "./services/blogs";
 import Togglable from "./toggable/Toggable";
+import { getStoredUser } from "./utils/storage";
 
 const initialBlogsPromise = blogService.index();
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(getStoredUser);
   const [blogsPromise, setBlogsPromise] = useState(initialBlogsPromise);
+
+  useEffect(() => {
+    setToken(user?.token ?? null);
+  }, [user]);
 
   const blogCreateRef = useRef();
 

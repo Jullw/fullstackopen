@@ -1,21 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import loginService from "../services/login";
-import { setToken } from "../services/blogs";
 import { useToast } from "../toast/ToastContext";
 
 const Login = ({ setUser }) => {
   const { showToast } = useToast();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("user");
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      setToken(user.token);
-    }
-  }, []);
 
   const handleLogin = async (event) => {
     event.preventDefault();

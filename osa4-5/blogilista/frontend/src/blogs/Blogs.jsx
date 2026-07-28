@@ -56,7 +56,7 @@ const Blog = ({ blog, refreshBlogs }) => {
   const deleteBlog = async () => {
     const [data, error] = await service.deleteBlog(blog.id);
     if (data) {
-      showToast(`blog deleted`, "success");
+      showToast("blog deleted", "success");
       refreshBlogs();
     }
     if (error) {
