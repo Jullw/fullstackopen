@@ -10,6 +10,7 @@
     "start": "node --env-file=.env.prod index.js",
     "dev": "node --env-file=.env.dev --watch index.js",
     "test": "node --env-file=.env.test --test",
+    "start:e2e-test": "node --env-file=.env.e2e --watch index.js",
     "lint": "eslint ."
   },
   "dependencies": {
