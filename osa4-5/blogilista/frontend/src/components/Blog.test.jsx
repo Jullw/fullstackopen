@@ -65,7 +65,7 @@ test("clicking the view button shows blog details", async () => {
     user: { username: "testuser" },
   };
 
-  render(<Blog blog={blog} />);
+  render(<Blog blog={blog} loggedUser={{ username: "testuser" }} />);
 
   const user = userEvent.setup();
 
