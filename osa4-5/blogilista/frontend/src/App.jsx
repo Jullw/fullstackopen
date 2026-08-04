@@ -21,7 +21,6 @@ const App = () => {
   const [user, setUser] = useState(getStoredUser());
 
   const blogFormRef = useRef();
-  const notificationTimerRef = useRef(null);
 
   useEffect(() => {
     blogService.getAll().then((initialBlogs) => {
@@ -97,19 +96,17 @@ const App = () => {
   };
 
   const handleNotifcation = (text, type) => {
-    clearTimeout(notificationTimerRef.current);
-
     setMessage({ text, type, id: crypto.randomUUID() });
-    notificationTimerRef.current = setTimeout(() => {
-      setMessage(null);
-      notificationTimerRef.current = null;
-    }, 5000);
   };
 
   const logout = () => {
     window.localStorage.removeItem("user");
     setUser(null);
   };
+
+  const sortedBlogs = [...blogs].sort(
+    (a, b) => (b.likes ?? 0) - (a.likes ?? 0),
+  );
 
   const loginForm = () => (
     <Togglable buttonLabel="login">
@@ -147,12 +144,13 @@ const App = () => {
         </div>
       )}
 
-      {blogs.map((blog) => (
+      {sortedBlogs.map((blog) => (
         <Blog
           key={blog.id}
           blog={blog}
           deleteBlog={deleteBlog}
           updateLike={updateLike}
+          loggedUser={user}
         />
       ))}
 

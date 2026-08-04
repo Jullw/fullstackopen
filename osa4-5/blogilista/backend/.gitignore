@@ -3,3 +3,4 @@ node_modules
 .env.prod
 .env.dev
 .env.test
+.env.e2e

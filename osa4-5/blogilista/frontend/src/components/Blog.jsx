@@ -1,13 +1,19 @@
 import React, { useState } from "react";
 
-const Blog = ({ blog, deleteBlog, updateLike }) => {
+const Blog = ({ blog, deleteBlog, updateLike, loggedUser }) => {
   const [view, setView] = useState(false);
   const { title, author, likes, url, user } = blog;
+
+  const userIsOwner =
+    blog.user && loggedUser && blog.user.username === loggedUser.username;
+
   return (
     <div className="blog">
       <div className="blog-header">
         <EmojiButton onClick={() => setView(!view)} text={view ? "🙈" : "👁️"} />
-        <EmojiButton onClick={() => deleteBlog(blog.id)} text="❌" />
+        {userIsOwner && (
+          <EmojiButton onClick={() => deleteBlog(blog.id)} text="❌" />
+        )}
       </div>
       <div>Title: {title}</div>
       {view && (
