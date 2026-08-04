@@ -1,6 +1,4 @@
 import { useState } from "react";
-import service from "../services/blogs";
-import { useToast } from "../toast/ToastContext";
 
 const blogTemplate = {
   title: "",
@@ -9,30 +7,19 @@ const blogTemplate = {
   likes: 0,
 };
 
-const CreateBlog = ({ onAction }) => {
-  const { showToast } = useToast();
+const BlogForm = ({ createBlog }) => {
   const [newBlog, setNewBlog] = useState(blogTemplate);
 
-  const handleCreateBlog = async (event) => {
+  const addBlog = (event) => {
     event.preventDefault();
-
-    const [data, error] = await service.create(newBlog);
-
-    if (data) {
-      onAction("created");
-      showToast("Blog created", "success");
-    }
-
-    if (error) {
-      showToast(error, "error");
-    }
-
+    createBlog(newBlog);
     setNewBlog(blogTemplate);
   };
 
   return (
     <div>
-      <form className="create-blog-form" onSubmit={handleCreateBlog}>
+      <h2>Create a new blog</h2>
+      <form className="create-blog-form" onSubmit={addBlog}>
         <div>
           <label>
             Author
@@ -47,9 +34,10 @@ const CreateBlog = ({ onAction }) => {
         </div>
         <div>
           <label>
-            title
+            Title
             <input
               type="text"
+              placeholder="write title here"
               value={newBlog.title}
               onChange={({ target }) =>
                 setNewBlog({ ...newBlog, title: target.value })
@@ -59,7 +47,7 @@ const CreateBlog = ({ onAction }) => {
         </div>
         <div>
           <label>
-            url
+            URL
             <input
               type="text"
               value={newBlog.url}
@@ -71,7 +59,7 @@ const CreateBlog = ({ onAction }) => {
         </div>
         <div>
           <label>
-            likes
+            Likes
             <input
               type="number"
               value={newBlog.likes}
@@ -81,13 +69,10 @@ const CreateBlog = ({ onAction }) => {
             />
           </label>
         </div>
-        <button type="button" onClick={() => onAction("cancel")}>
-          Cancel
-        </button>
         <button type="submit">Create Blog</button>
       </form>
     </div>
   );
 };
 
-export default CreateBlog;
+export default BlogForm;

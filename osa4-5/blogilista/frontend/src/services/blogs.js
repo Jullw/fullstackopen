@@ -1,106 +1,89 @@
-const baseUrl = "api/blogs";
+const baseUrl = "/api/blogs";
 
 let token = null;
 
-export const setToken = (newToken) => {
+const setToken = (newToken) => {
   token = `Bearer ${newToken}`;
 };
 
-const index = async () => {
-  const response = await fetch(baseUrl);
+const getHeaders = () => ({
+  Authorization: token,
+  "Content-Type": "application/json",
+});
+
+const getAll = async () => {
+  const response = await fetch(baseUrl, {
+    headers: getHeaders(),
+  });
+
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.error ?? `HTTP error ${response.status}`);
+    throw new Error(data.error || "error");
   }
 
   return data;
 };
 
-const create = async (object) => {
-  try {
-    const response = await fetch(baseUrl, {
-      method: "POST",
-      body: JSON.stringify(object),
-      headers: { Authorization: token, "Content-Type": "application/json" },
-    });
-    const data = await response.json();
+const create = async (newObject) => {
+  const response = await fetch(baseUrl, {
+    method: "POST",
+    headers: getHeaders(),
+    body: JSON.stringify(newObject),
+  });
 
-    if (!response.ok) {
-      return [null, data.error || "error"];
-    }
+  const data = await response.json();
 
-    return [data, null];
-  } catch (error) {
-    return [null, error.message];
+  if (!response.ok) {
+    throw new Error(data.error || "error");
   }
+
+  return data;
 };
 
-const update = async (object) => {
-  try {
-    const response = await fetch(`${baseUrl}/${object.id}`, {
-      method: "PUT",
-      body: JSON.stringify(object),
-      headers: { Authorization: token, "Content-Type": "application/json" },
-    });
-    const data = await response.json();
+const update = async (id, newObject) => {
+  const response = await fetch(`${baseUrl}/${id}`, {
+    method: "PUT",
+    headers: getHeaders(),
+    body: JSON.stringify(newObject),
+  });
+  const data = await response.json();
 
-    if (!response.ok) {
-      return [null, data.error || "error"];
-    }
-
-    return [data, null];
-  } catch (error) {
-    return [null, error.message];
+  if (!response.ok) {
+    throw new Error(data.error || "error");
   }
+
+  return data;
+};
+
+const remove = async (id) => {
+  const response = await fetch(`${baseUrl}/${id}`, {
+    method: "DELETE",
+    headers: getHeaders(),
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.error || "error");
+  }
+
+  return true;
 };
 
 const likeOrDislike = async (id, object) => {
-  try {
-    const response = await fetch(`${baseUrl}/like/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify(object),
-      headers: { Authorization: token, "Content-Type": "application/json" },
-    });
-    const data = await response.json();
+  const response = await fetch(`${baseUrl}/like/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(object),
+    headers: getHeaders(),
+  });
 
-    if (!response.ok) {
-      return [null, data.error || "error"];
-    }
+  const data = await response.json();
 
-    return [data, null];
-  } catch (error) {
-    return [null, error.message];
+  if (!response.ok) {
+    throw new Error(data.error || "error");
   }
+
+  return data;
 };
 
-const deleteBlog = async (id) => {
-  try {
-    const response = await fetch(`${baseUrl}/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: token, "Content-Type": "application/json" },
-    });
-
-    if (response.status === 204) {
-      return [true, null];
-    }
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return [null, data.error || "error"];
-    }
-
-    return [true, null];
-  } catch (error) {
-    return [null, error.message];
-  }
-};
-
-export default {
-  index: index,
-  create: create,
-  update: update,
-  likeOrDislike: likeOrDislike,
-  deleteBlog: deleteBlog,
-};
+export default { getAll, create, update, remove, likeOrDislike, setToken };

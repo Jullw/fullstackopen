@@ -39,12 +39,28 @@ export default [
       "object-curly-spacing": ["error", "always"],
       "array-bracket-spacing": ["error", "never"],
       "arrow-spacing": ["error", { before: true, after: true }],
+      "arrow-parens": ["error", "always"],
+      "block-spacing": ["error", "always"],
       "comma-spacing": ["error", { before: false, after: true }],
+      "comma-style": ["error", "last"],
+      "computed-property-spacing": ["error", "never"],
+      "func-call-spacing": ["error", "never"],
+      "key-spacing": ["error", { beforeColon: false, afterColon: true }],
       "keyword-spacing": ["error", { before: true, after: true }],
       "space-before-blocks": "error",
       "space-infix-ops": "error",
+      "space-unary-ops": "error",
+      "template-curly-spacing": ["error", "never"],
       "eol-last": ["error", "always"],
       "no-console": "off",
+    },
+  },
+  {
+    files: ["**/*.test.{js,jsx}"],
+    languageOptions: {
+      globals: {
+        ...globals.vitest,
+      },
     },
   },
 ];
