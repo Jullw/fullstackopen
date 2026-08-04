@@ -104,7 +104,7 @@ blogsRouter.patch("/like/:id", userAthorization, async (request, response) => {
     request.params.id,
     { $inc: { likes: amount } },
     {
-      new: true,
+      returnDocument: "after",
       runValidators: true,
     },
   ).populate("user", {
