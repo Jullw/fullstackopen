@@ -1,7 +1,6 @@
-h1 {
-  color: green;
-  font-style: italic;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 html,
 body {
@@ -10,19 +9,8 @@ body {
   padding: 0;
 }
 
-.app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
 .footer {
-  margin-top: auto;
-}
-
-.footer-content {
-  color: green;
-  font-style: italic;
+  @apply bg-slate-50 flex justify-center items-center mt-auto border-t border border-solid min-h-20;
 }
 
 .blog {
@@ -149,11 +137,10 @@ body {
   outline: none;
 }
 
-.nav-bar {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.nav-link {
+  @apply bg-slate-200 border-r border-t border-solid border-black rounded-sm p-2 hover:bg-slate-300 text-black no-underline;
+}
 
-  background-color: #f3f4f6;
-  border-bottom: 1px solid #e5e7eb;
+.basic-button {
+  @apply w-fit bg-white text-black px-2 py-1 border border-solid border-black hover:cursor-pointer;
 }

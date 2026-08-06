@@ -5,6 +5,7 @@ import Notification from "./components/Notification";
 import LoginForm from "./components/LoginForm";
 import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
+import Navbar from "./components/Navbar";
 import loginService from "./services/login";
 import blogService from "./services/blogs";
 import { getStoredUser } from "./utils/storage";
@@ -129,30 +130,15 @@ const App = () => {
     </Togglable>
   );
 
-  const loggedInUser = () => (
-    <p>
-      {user.name} logged in
-      <button onClick={logout}>logout</button>
-    </p>
-  );
-
   return (
-    <div className="app">
+    <div className="flex flex-col min-h-svh">
       <Notification message={message} />
-
-      <div className="nav-bar">
-        <Link to="/">home</Link>
-        <Link to="/blogs">blogs</Link>
-        <Link to="/create">new blog</Link>
-        <Link to="/login">login</Link>
-        {user && loggedInUser()}
-      </div>
-
+      <Navbar user={user} logout={logout} />
       <Routes>
         <Route
           path="/blogs"
           element={
-            <>
+            <div className="mt-4 flex flex-col items-center flex-grow">
               {sortedBlogs.map((blog) => (
                 <Blog
                   key={blog.id}
@@ -162,19 +148,21 @@ const App = () => {
                   loggedUser={user}
                 />
               ))}
-            </>
+            </div>
           }
         />
         <Route
           path="/blogs/:id"
           element={
-            <Blog
-              key={blog?.id}
-              blog={blog}
-              deleteBlog={deleteBlog}
-              updateLike={updateLike}
-              loggedUser={user}
-            />
+            <div className="mt-4 flex flex-col justify-center items-center">
+              <Blog
+                key={blog?.id}
+                blog={blog}
+                deleteBlog={deleteBlog}
+                updateLike={updateLike}
+                loggedUser={user}
+              />
+            </div>
           }
         />
         <Route
