@@ -3,6 +3,28 @@ h1 {
   font-style: italic;
 }
 
+html,
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.footer {
+  margin-top: auto;
+}
+
+.footer-content {
+  color: green;
+  font-style: italic;
+}
+
 .blog {
   color: grey;
   padding-top: 5px;
@@ -125,4 +147,13 @@ h1 {
 
 .emoji-button:focus-visible {
   outline: none;
+}
+
+.nav-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  background-color: #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
 }
