@@ -6,12 +6,15 @@ const LoginForm = ({
   password,
 }) => {
   return (
-    <div>
-      <h2>Login</h2>
+    <div className="mt-4 flex flex-col justify-center items-center">
+      <h2 className="">Login</h2>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>
+      <form
+        className="grid w-fit grid-cols-[max-content_1fr] items-center gap-2"
+        onSubmit={handleSubmit}
+      >
+        <div className="contents">
+          <label className="contents">
             username
             <input
               type="text"
@@ -20,8 +23,8 @@ const LoginForm = ({
             />
           </label>
         </div>
-        <div>
-          <label>
+        <div className="contents">
+          <label className="contents">
             password
             <input
               type="password"
@@ -30,7 +33,9 @@ const LoginForm = ({
             />
           </label>
         </div>
-        <button type="submit">login</button>
+        <button className="col-start-2 basic-button" type="submit">
+          login
+        </button>
       </form>
     </div>
   );

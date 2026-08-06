@@ -17,7 +17,7 @@ const BlogForm = ({ createBlog }) => {
   };
 
   return (
-    <div>
+    <div className="mt-4 flex flex-col justify-center items-center">
       <h2>Create a new blog</h2>
       <form className="create-blog-form" onSubmit={addBlog}>
         <div>
@@ -69,7 +69,9 @@ const BlogForm = ({ createBlog }) => {
             />
           </label>
         </div>
-        <button type="submit">Create Blog</button>
+        <button className="basic-button" type="submit">
+          Create Blog
+        </button>
       </form>
     </div>
   );
