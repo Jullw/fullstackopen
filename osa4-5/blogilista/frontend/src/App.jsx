@@ -8,6 +8,8 @@ import Togglable from "./components/Togglable";
 import loginService from "./services/login";
 import blogService from "./services/blogs";
 import { getStoredUser } from "./utils/storage";
+import { Routes, Route, Link, useMatch, useNavigate } from "react-router-dom";
+import Home from "./components/Home";
 
 const capitalize = (text) => {
   return text.charAt(0).toUpperCase() + text.slice(1);
@@ -19,8 +21,11 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(getStoredUser());
-
+  const navigate = useNavigate();
   const blogFormRef = useRef();
+
+  const match = useMatch("/blogs/:id");
+  const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
 
   useEffect(() => {
     blogService.getAll().then((initialBlogs) => {
@@ -37,12 +42,12 @@ const App = () => {
 
     try {
       const returnedBlog = await blogService.create(blogObject);
-      console.log("returnedBlog", returnedBlog);
       setBlogs(blogs.concat(returnedBlog));
       handleNotifcation(
         `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`,
         "success",
       );
+      navigate("/blogs");
     } catch (error) {
       handleNotifcation(error.message, "error");
     }
@@ -53,12 +58,15 @@ const App = () => {
       await blogService.remove(blogId);
       setBlogs(blogs.filter((blog) => blog.id !== blogId));
       handleNotifcation("Blog deleted successfully", "success");
+      navigate("/blogs");
     } catch (error) {
       handleNotifcation(error.message, "error");
     }
   };
 
   const updateLike = async (blogId, likeType) => {
+    if (!user) return;
+
     try {
       const updatedBlog = await blogService.likeOrDislike(blogId, {
         type: likeType,
@@ -78,9 +86,8 @@ const App = () => {
     }
   };
 
-  const handleLogin = async (event) => {
+  const handleLogin = async () => {
     event.preventDefault();
-
     try {
       const user = await loginService.login({ username, password });
 
@@ -90,6 +97,7 @@ const App = () => {
       setUsername("");
       setPassword("");
       handleNotifcation(`${user.username} logged in successfully`, "success");
+      navigate("/blogs");
     } catch (error) {
       handleNotifcation(error.message, "error");
     }
@@ -102,6 +110,7 @@ const App = () => {
   const logout = () => {
     window.localStorage.removeItem("user");
     setUser(null);
+    navigate("/blogs");
   };
 
   const sortedBlogs = [...blogs].sort(
@@ -120,40 +129,65 @@ const App = () => {
     </Togglable>
   );
 
+  const loggedInUser = () => (
+    <p>
+      {user.name} logged in
+      <button onClick={logout}>logout</button>
+    </p>
+  );
+
   return (
-    <div>
-      <h1>Blogs</h1>
+    <div className="app">
       <Notification message={message} />
 
-      {!user && loginForm()}
-      {user && (
-        <div>
-          <p>
-            {user.name} logged in
-            <button
-              onClick={() => {
-                logout();
-              }}
-            >
-              logout
-            </button>
-          </p>
-          <Togglable buttonLabel="new blog" ref={blogFormRef}>
-            <BlogForm createBlog={addBlog} />
-          </Togglable>
-        </div>
-      )}
+      <div className="nav-bar">
+        <Link to="/">home</Link>
+        <Link to="/blogs">blogs</Link>
+        <Link to="/create">new blog</Link>
+        <Link to="/login">login</Link>
+        {user && loggedInUser()}
+      </div>
 
-      {sortedBlogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          deleteBlog={deleteBlog}
-          updateLike={updateLike}
-          loggedUser={user}
+      <Routes>
+        <Route
+          path="/blogs"
+          element={
+            <>
+              {sortedBlogs.map((blog) => (
+                <Blog
+                  key={blog.id}
+                  blog={blog}
+                  deleteBlog={deleteBlog}
+                  updateLike={updateLike}
+                  loggedUser={user}
+                />
+              ))}
+            </>
+          }
         />
-      ))}
-
+        <Route
+          path="/blogs/:id"
+          element={
+            <Blog
+              key={blog?.id}
+              blog={blog}
+              deleteBlog={deleteBlog}
+              updateLike={updateLike}
+              loggedUser={user}
+            />
+          }
+        />
+        <Route
+          path="/create"
+          element={
+            <Togglable buttonLabel="new blog" ref={blogFormRef}>
+              <BlogForm createBlog={addBlog} />
+            </Togglable>
+          }
+        />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={!user && loginForm()} />
+      </Routes>
       <Footer />
     </div>
   );

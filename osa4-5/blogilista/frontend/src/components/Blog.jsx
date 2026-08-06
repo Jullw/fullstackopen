@@ -1,8 +1,18 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+
+const blogNotFound = () => {
+  return <div>Blog not found</div>;
+};
 
 const Blog = ({ blog, deleteBlog, updateLike, loggedUser }) => {
   const [view, setView] = useState(false);
-  const { title, author, likes, url, user } = blog;
+
+  if (!blog) {
+    return blogNotFound();
+  }
+
+  const { title, author, likes, url, user, id } = blog;
 
   const userIsOwner =
     blog.user && loggedUser && blog.user.username === loggedUser.username;
@@ -15,7 +25,7 @@ const Blog = ({ blog, deleteBlog, updateLike, loggedUser }) => {
           <EmojiButton onClick={() => deleteBlog(blog.id)} text="❌" />
         )}
       </div>
-      <div>Title: {title}</div>
+      <Link to={`/blogs/${id}`}>{title}</Link>
       {view && (
         <div>
           {user ? <div> Added by: {user.username} </div> : <></>}
@@ -23,14 +33,18 @@ const Blog = ({ blog, deleteBlog, updateLike, loggedUser }) => {
           <div> URL: {url} </div>
           <div>
             Likes: {likes}
-            <EmojiButton
-              onClick={() => updateLike(blog.id, "dislike")}
-              text="👎"
-            />
-            <EmojiButton
-              onClick={() => updateLike(blog.id, "like")}
-              text="👍"
-            />
+            {loggedUser && (
+              <EmojiButton
+                onClick={() => updateLike(blog.id, "dislike")}
+                text="👎"
+              />
+            )}
+            {loggedUser && (
+              <EmojiButton
+                onClick={() => updateLike(blog.id, "like")}
+                text="👍"
+              />
+            )}
           </div>
         </div>
       )}
