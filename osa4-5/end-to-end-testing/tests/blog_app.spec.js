@@ -29,6 +29,7 @@ test.describe("Blog app", () => {
 
   test.describe("login", () => {
     test("Login form is shown", async ({ page }) => {
+      await page.getByRole("link", { name: "login" }).click();
       await page.getByRole("button", { name: "login" }).click();
       await expect(page.getByLabel("username")).toBeVisible();
       await expect(page.getByLabel("password")).toBeVisible();
@@ -51,13 +52,16 @@ test.describe("Blog app", () => {
   test.describe("when logged in", () => {
     test.beforeEach(async ({ page }) => {
       await loginWith(page, "tester", "testeR123");
+      await expect(page).toHaveURL("/blogs");
     });
 
     test("a new blog  can be created", async ({ page }) => {
       await createBlog(page, content);
       //   await page.pause();
       // npm test -- -g'a new blog  can be created' --debug
-      await expect(page.getByText(`Title: ${content.title}`)).toBeVisible();
+      await expect(
+        page.getByRole("link", { name: content.title, exact: true }),
+      ).toBeVisible();
     });
 
     test.describe("and a blog exists", () => {
@@ -69,12 +73,14 @@ test.describe("Blog app", () => {
       });
 
       test("another blog exists", async ({ page }) => {
-        await expect(page.getByText("Title: Another test blog")).toBeVisible();
+        await expect(
+          page.getByRole("link", { name: "Another test blog", exact: true }),
+        ).toBeVisible();
       });
 
       test("blog can be liked", async ({ page }) => {
         const blog = page.locator(".blog", {
-          hasText: "Title: Another test blog",
+          hasText: "Another test blog",
         });
 
         await expect(blog).toBeVisible();
@@ -88,7 +94,7 @@ test.describe("Blog app", () => {
 
       test("blog can be disliked", async ({ page }) => {
         const blog = page.locator(".blog", {
-          hasText: "Title: Another test blog",
+          hasText: "Another test blog",
         });
 
         await expect(blog).toBeVisible();
@@ -102,7 +108,7 @@ test.describe("Blog app", () => {
 
       test("blog can be deleted", async ({ page }) => {
         const blog = page.locator(".blog", {
-          hasText: "Title: Another test blog",
+          hasText: "Another test blog",
         });
 
         await expect(blog).toBeVisible();
@@ -124,7 +130,7 @@ test.describe("Blog app", () => {
         });
 
         const blog = page.locator(".blog", {
-          hasText: "Title: Another test blog",
+          hasText: "Another test blog",
         });
 
         await expect(blog.getByRole("button", { name: "❌" })).toBeVisible();
@@ -154,11 +160,13 @@ test.describe("Blog app", () => {
         await createBlog(page, mostLikedBlog);
         await createBlog(page, secondMostLikedBlog);
 
-        await expect(page.getByText("Title: Most liked blog")).toBeVisible();
+        await expect(
+          page.getByRole("link", { name: "Most liked blog", exact: true }),
+        ).toBeVisible();
 
         const blogs = page.locator(".blog");
 
-        await expect(blogs.first()).toContainText("Title: Most liked blog");
+        await expect(blogs.first()).toContainText("Most liked blog");
       });
     });
   });
